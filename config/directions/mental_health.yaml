@@ -14,8 +14,8 @@ landing_url: "https://example.com"
 brand_placeholder: "[название проекта]"
 timezone: "UTC"
 limits:
-  daily_usd: 5.0
-  monthly_usd: 100.0
+  daily_usd: 50.0
+  monthly_usd: 500.0
 forbidden_phrases:
   - "guaranteed cure"
   - "medical diagnosis"

@@ -177,7 +177,7 @@ def test_weekly_spend_report(stage2_orchestrator, storage):
     assert report["by_stage"]["generator"] == 0.12
     assert report["by_stage"]["planner"] == 0.03
     assert "Недельный отчёт" in report["summary_text"]
-    assert report["limits"]["daily_usd"] == 5.0
+    assert report["limits"]["daily_usd"] == 50.0
 
 
 @pytest.mark.asyncio

@@ -185,6 +185,6 @@ class DirectionProfile(BaseModel):
 
 
 class SpendLimits(BaseModel):
-    daily_usd: float = 10.0
-    monthly_usd: float = 300.0
+    daily_usd: float = 50.0
+    monthly_usd: float = 500.0
     warning_threshold: float = 0.8

@@ -230,9 +230,9 @@ def test_direction_yaml_daily_limit_applied(orchestrator):
     direction_limits = orchestrator.check_spend_limits(direction="mental_health")
 
     assert global_limits["daily"]["limit_usd"] == orchestrator.settings.daily_spend_limit_usd
-    # config/directions/mental_health.yaml → limits.daily_usd: 5.0
-    assert direction_limits["daily"]["limit_usd"] == 5.0
-    assert direction_limits["monthly"]["limit_usd"] == 100.0
+    # config/directions/mental_health.yaml → limits.daily_usd: 50.0
+    assert direction_limits["daily"]["limit_usd"] == 50.0
+    assert direction_limits["monthly"]["limit_usd"] == 500.0
     assert direction_limits["daily"]["limit_usd"] != global_limits["daily"]["limit_usd"]
 
 
@@ -262,7 +262,7 @@ def test_spend_warning_at_80_percent(orchestrator, storage):
     direction = "mental_health"
     limits = orchestrator.check_spend_limits(direction=direction)
     daily_limit = limits["daily"]["limit_usd"]
-    assert daily_limit == 5.0
+    assert daily_limit == 50.0
 
     storage.save_model_call(
         ModelCall(

@@ -30,8 +30,8 @@ class Settings(BaseSettings):
     max_revision_rounds: int = 2
     audit_pass_threshold: float = 0.7
     
-    daily_spend_limit_usd: float = 10.0
-    monthly_spend_limit_usd: float = 300.0
+    daily_spend_limit_usd: float = 50.0
+    monthly_spend_limit_usd: float = 500.0
     
     database_path: str = "data/content_factory.db"
     config_dir: str = "config"

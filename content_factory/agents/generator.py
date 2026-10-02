@@ -92,7 +92,7 @@ class Generator:
         response = await self.provider.generate(
             prompt=prompt,
             model=self.model,
-            max_tokens=4096,
+            max_tokens=8192,
         )
         
         try:
