@@ -1,0 +1,46 @@
+version: "1.0"
+direction: "Mental Health & Wellbeing"
+
+rules:
+  - "Use evidence from credible sources only"
+  - "Write in active voice"
+  - "Avoid medical jargon unless explained"
+  - "Include practical takeaways"
+  - "No sensationalist language"
+  - "Respect reader autonomy"
+
+forbidden_phrases:
+  - "guaranteed cure"
+  - "medical diagnosis"
+  - "individual treatment recommendation"
+  - "medical promise"
+  - "will cure your"
+  - "diagnose yourself"
+  - "personal medical advice"
+
+required_elements:
+  article:
+    - "thesis"
+    - "facts_with_sources"
+    - "practical_conclusion"
+    - "cta"
+  post:
+    - "single_idea"
+    - "link_to_article"
+  review:
+    - "what_happened"
+    - "why_important"
+    - "sources"
+
+tone_guidelines:
+  - "Calm and measured"
+  - "Evidence-based, not prescriptive"
+  - "Respectful of complexity"
+  - "Practical and actionable"
+
+avoid_patterns:
+  - "Generic AI openings like 'In today's fast-paced world'"
+  - "Excessive transition phrases"
+  - "Passive voice overuse"
+  - "Repetitive sentence structures"
+  - "Listicle formatting without narrative"

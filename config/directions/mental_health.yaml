@@ -1,0 +1,26 @@
+name: "Mental Health & Wellbeing"
+audience: "Adults 25-45 interested in self-improvement and balance"
+tone: "Calm, concrete, evidence-based, no preaching"
+topics_per_week: 2
+rubrics:
+  - "research"
+  - "practical_guide"
+  - "q_and_a"
+channels:
+  - "site"
+  - "telegram"
+cta: "Try this practice"
+landing_url: "https://example.com"
+brand_placeholder: "[project name]"
+timezone: "UTC"
+limits:
+  daily_usd: 5.0
+  monthly_usd: 100.0
+forbidden_phrases:
+  - "guaranteed cure"
+  - "medical diagnosis"
+  - "individual treatment"
+  - "medical promise"
+  - "will cure"
+  - "diagnose yourself"
+style_guide_version: "1.0"
