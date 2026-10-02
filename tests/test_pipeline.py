@@ -204,7 +204,7 @@ async def test_audit_result_present(orchestrator):
     # Duplicate check is stubbed until a published corpus exists.
     assert task.audit_result.checklist_scores.get("no_duplicates") is True
     assert any(
-        r.rule == "no_duplicates" and "published corpus not available" in r.comment.lower()
+        r.rule == "no_duplicates" and "корпус опубликованных" in r.comment.lower()
         for r in task.audit_result.remarks
     )
 
@@ -234,6 +234,24 @@ def test_direction_yaml_daily_limit_applied(orchestrator):
     assert direction_limits["daily"]["limit_usd"] == 5.0
     assert direction_limits["monthly"]["limit_usd"] == 100.0
     assert direction_limits["daily"]["limit_usd"] != global_limits["daily"]["limit_usd"]
+
+
+def test_missing_direction_yaml_uses_defaults():
+    """Custom directions without YAML get a valid default profile."""
+    from content_factory.config import load_direction_profile
+
+    profile = load_direction_profile("прокрастинация")
+    assert profile.name == "прокрастинация"
+    assert profile.audience
+    assert profile.tone
+
+
+def test_parse_model_json_strips_markdown_fence():
+    from content_factory.json_util import parse_model_json
+
+    raw = '```json\n{"facts": [{"statement": "x"}]}\n```'
+    data = parse_model_json(raw)
+    assert data["facts"][0]["statement"] == "x"
 
 
 def test_spend_warning_at_80_percent(orchestrator, storage):
@@ -338,7 +356,7 @@ def test_post_filter_blocks_medical_and_unsourced():
     ok, remark = check_duplicates_against_published(medical, "mental_health")
     assert ok is True
     assert remark is not None
-    assert "published corpus not available" in remark.comment.lower()
+    assert "корпус опубликованных" in remark.comment.lower()
 
 
 @pytest.mark.asyncio

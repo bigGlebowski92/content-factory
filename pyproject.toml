@@ -5,6 +5,7 @@ description = "Automated content production system - Stage 1: Generation Core"
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.39.0",
+    "openai>=1.50.0",
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.32.0",
     "pydantic>=2.9.0",

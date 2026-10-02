@@ -1,13 +1,13 @@
 version: "1.0"
-direction: "Mental Health & Wellbeing"
+direction: "Ментальное здоровье и wellbeing"
 
 rules:
-  - "Use evidence from credible sources only"
-  - "Write in active voice"
-  - "Avoid medical jargon unless explained"
-  - "Include practical takeaways"
-  - "No sensationalist language"
-  - "Respect reader autonomy"
+  - "Опирайся только на достоверные источники"
+  - "Пиши в активном залоге"
+  - "Избегай меджаргона без пояснения"
+  - "Давай практические выводы"
+  - "Без сенсационности"
+  - "Уважай автономию читателя"
 
 forbidden_phrases:
   - "guaranteed cure"
@@ -33,14 +33,14 @@ required_elements:
     - "sources"
 
 tone_guidelines:
-  - "Calm and measured"
-  - "Evidence-based, not prescriptive"
-  - "Respectful of complexity"
-  - "Practical and actionable"
+  - "Спокойно и взвешенно"
+  - "На основе фактов, без предписаний"
+  - "С уважением к сложности темы"
+  - "Практично и применимо"
 
 avoid_patterns:
-  - "Generic AI openings like 'In today's fast-paced world'"
-  - "Excessive transition phrases"
-  - "Passive voice overuse"
-  - "Repetitive sentence structures"
-  - "Listicle formatting without narrative"
+  - "Шаблонные AI-вступления вроде «В современном мире...»"
+  - "Избыточные связки"
+  - "Злоупотребление пассивом"
+  - "Однотипные конструкции предложений"
+  - "Листрикл без повествования"

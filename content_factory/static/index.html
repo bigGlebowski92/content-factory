@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,76 +14,76 @@
 
   <header class="top">
     <div class="brand-block">
-      <p class="eyebrow">Stages 1–3 · mock ready</p>
+      <p class="eyebrow">Этапы 1–3 · OpenAI / mock</p>
       <h1 class="brand">Content Factory</h1>
-      <p class="lede">Згенеруй текст, погодь людиною, опублікуй у Telegram або на майданчик — з UTM і кліками.</p>
+      <p class="lede">Сгенерируйте текст, согласуйте человеком, опубликуйте в Telegram или на площадку — с UTM и кликами.</p>
     </div>
     <div class="top-actions">
-      <button type="button" class="btn ghost" id="btn-refresh">Оновити</button>
+      <button type="button" class="btn ghost" id="btn-refresh">Обновить</button>
       <a class="btn ghost" href="/docs" target="_blank" rel="noreferrer">API docs</a>
     </div>
   </header>
 
   <main class="layout">
     <section class="panel run-panel" aria-labelledby="run-title">
-      <h2 id="run-title">Новий цикл</h2>
+      <h2 id="run-title">Новый цикл</h2>
       <form id="run-form" class="stack">
         <label>
-          Direction
+          Направление
           <input name="direction" value="mental_health" required />
         </label>
         <label>
-          Тема (опційно)
-          <input name="topic_text" placeholder="How Sleep Affects Focus" />
+          Тема (необязательно)
+          <input name="topic_text" placeholder="Как сон влияет на концентрацию" />
         </label>
         <label>
           Рубрика
           <input name="topic_rubric" value="research" />
         </label>
-        <button type="submit" class="btn primary" id="btn-run">Запустити генерацію</button>
+        <button type="submit" class="btn primary" id="btn-run">Запустить генерацию</button>
       </form>
-      <p class="hint">Пайплайн зупиняється на <strong>approval</strong> — без людини нічого не публікується.</p>
+      <p class="hint">Пайплайн останавливается на статусе <strong>approval</strong> — без человека ничего не публикуется.</p>
     </section>
 
     <section class="panel list-panel" aria-labelledby="list-title">
       <div class="panel-head">
-        <h2 id="list-title">Задачі</h2>
-        <select id="status-filter" aria-label="Фільтр статусу">
-          <option value="">Усі статуси</option>
-          <option>approval</option>
-          <option>disputed</option>
-          <option>approved</option>
-          <option>scheduled</option>
-          <option>published</option>
-          <option>rejected</option>
+        <h2 id="list-title">Задачи</h2>
+        <select id="status-filter" aria-label="Фильтр статуса">
+          <option value="">Все статусы</option>
+          <option value="approval">ожидает согласования</option>
+          <option value="disputed">спорный</option>
+          <option value="approved">одобрен</option>
+          <option value="scheduled">запланирован</option>
+          <option value="published">опубликован</option>
+          <option value="rejected">отклонён</option>
         </select>
       </div>
       <div id="task-list" class="task-list" role="list"></div>
     </section>
 
     <section class="panel detail-panel" aria-labelledby="detail-title">
-      <h2 id="detail-title">Деталі</h2>
-      <div id="task-detail" class="detail-empty">Обери задачу зі списку</div>
+      <h2 id="detail-title">Детали</h2>
+      <div id="task-detail" class="detail-empty">Выберите задачу из списка</div>
     </section>
 
     <section class="panel metrics-panel" aria-labelledby="metrics-title">
       <h2 id="metrics-title">Метрики</h2>
       <div class="metrics-grid">
         <div>
-          <h3>Spend</h3>
+          <h3>Расходы</h3>
           <pre id="spend-box" class="mono">—</pre>
         </div>
         <div>
-          <h3>Weekly report</h3>
+          <h3>Недельный отчёт</h3>
           <pre id="weekly-box" class="mono">—</pre>
         </div>
         <div>
-          <h3>Clicks · text → channel</h3>
+          <h3>Клики · текст → канал</h3>
           <pre id="clicks-box" class="mono">—</pre>
         </div>
       </div>
       <div class="row-actions">
-        <button type="button" class="btn ghost" id="btn-publish-due">Publish due Telegram</button>
+        <button type="button" class="btn ghost" id="btn-publish-due">Опубликовать due в Telegram</button>
       </div>
     </section>
   </main>

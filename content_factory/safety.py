@@ -40,7 +40,7 @@ def check_duplicates_against_published(
     return True, AuditRemark(
         rule="no_duplicates",
         quote="",
-        comment="Skipped: published corpus not available in Stage 1",
+        comment="Пропущено: корпус опубликованных материалов на этапе 1 недоступен",
     )
 
 

@@ -1,6 +1,6 @@
-name: "Mental Health & Wellbeing"
-audience: "Adults 25-45 interested in self-improvement and balance"
-tone: "Calm, concrete, evidence-based, no preaching"
+name: "Ментальное здоровье и wellbeing"
+audience: "Взрослые 25–45, которым важны баланс и саморазвитие"
+tone: "Спокойный, конкретный, на основе доказательств, без нравоучений"
 topics_per_week: 2
 rubrics:
   - "research"
@@ -9,9 +9,9 @@ rubrics:
 channels:
   - "site"
   - "telegram"
-cta: "Try this practice"
+cta: "Попробовать практику"
 landing_url: "https://example.com"
-brand_placeholder: "[project name]"
+brand_placeholder: "[название проекта]"
 timezone: "UTC"
 limits:
   daily_usd: 5.0

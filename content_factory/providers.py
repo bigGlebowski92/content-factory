@@ -39,20 +39,30 @@ class MockModelProvider(ModelProvider):
         if (
             "audit this text" in prompt_lower
             or "quality checklist" in prompt_lower
+            or "проведи аудит" in prompt_lower
+            or "чеклист качества" in prompt_lower
             or ("verdict" in prompt_lower and "checklist" in prompt_lower)
         ):
             response = self._generate_audit()
         elif (
             "compile a fact dossier" in prompt_lower
             or "research this topic" in prompt_lower
+            or "fact dossier" in prompt_lower
+            or "собери fact dossier" in prompt_lower
             or ("research specialist" in prompt_lower and "facts" in prompt_lower)
         ):
             response = self._generate_research()
-        elif "topic" in prompt_lower and ("plan" in prompt_lower or '"topics"' in prompt_lower):
+        elif "topic" in prompt_lower and (
+            "plan" in prompt_lower
+            or "планировщик" in prompt_lower
+            or '"topics"' in prompt_lower
+        ):
             response = self._generate_topics()
         elif (
             "write an original" in prompt_lower
             or "expert content writer" in prompt_lower
+            or "экспертный автор" in prompt_lower
+            or "напиши оригинальный" in prompt_lower
             or ('"title"' in prompt_lower and '"body"' in prompt_lower and '"cta"' in prompt_lower)
         ):
             response = self._generate_article()
@@ -74,14 +84,14 @@ class MockModelProvider(ModelProvider):
     def _generate_topics(self) -> str:
         topics = [
             {
-                "topic": "The Science Behind Mindful Breathing Techniques",
+                "topic": "Наука осознанного дыхания: что подтверждают исследования",
                 "rubric": "research",
-                "rationale": "Growing interest in evidence-based stress management practices",
+                "rationale": "Растёт интерес к практикам управления стрессом на основе доказательств",
             },
             {
-                "topic": "How Sleep Patterns Affect Mental Clarity",
+                "topic": "Как режим сна влияет на ясность мышления",
                 "rubric": "practical_guide",
-                "rationale": "High search volume, addresses common wellness concern",
+                "rationale": "Высокий спрос в поиске, частый запрос аудитории",
             },
         ]
         return json.dumps({"topics": topics}, ensure_ascii=False)
@@ -90,34 +100,34 @@ class MockModelProvider(ModelProvider):
         dossier = {
             "facts": [
                 {
-                    "statement": "Mindful breathing activates the parasympathetic nervous system",
+                    "statement": "Осознанное дыхание активирует парасимпатическую нервную систему",
                     "source": {
                         "url": "https://example.org/study/breathing-2024",
                         "title": "Effects of Controlled Breathing on Stress Response",
                         "date": "2024-03",
                         "reliability": "high",
                     },
-                    "supporting_quote": "Participants showed reduced cortisol levels after 10 minutes of paced breathing",
+                    "supporting_quote": "У участников снизился уровень кортизола после 10 минут ритмичного дыхания",
                 },
                 {
-                    "statement": "Regular practice improves focus and emotional regulation",
+                    "statement": "Регулярная практика улучшает концентрацию и эмоциональную регуляцию",
                     "source": {
                         "url": "https://example.org/journal/mindfulness",
                         "title": "Mindfulness Practice and Cognitive Function",
                         "date": "2024-01",
                         "reliability": "high",
                     },
-                    "supporting_quote": "8-week intervention group demonstrated significant improvements in attention span",
+                    "supporting_quote": "После 8 недель практики группа показала значимый рост устойчивости внимания",
                 },
                 {
-                    "statement": "4-7-8 breathing technique shows measurable anxiety reduction",
+                    "statement": "Техника дыхания 4-7-8 связана со снижением тревожности",
                     "source": {
                         "url": "https://example.org/clinical-trials/anxiety",
                         "title": "Breathing Patterns and Anxiety Management",
                         "date": "2023-11",
                         "reliability": "high",
                     },
-                    "supporting_quote": "Anxiety scores decreased by 31% using structured breathing protocols",
+                    "supporting_quote": "Показатели тревожности снизились на 31% при структурированных протоколах дыхания",
                 },
             ]
         }
@@ -125,40 +135,39 @@ class MockModelProvider(ModelProvider):
     
     def _generate_article(self) -> str:
         article = {
-            "title": "The Science Behind Mindful Breathing: What Research Shows",
-            "lead": "New research reveals how simple breathing exercises can reshape your stress response and improve mental clarity.",
-            "body": """Recent scientific studies demonstrate that controlled breathing techniques offer measurable benefits for stress management and cognitive function.
+            "title": "Наука осознанного дыхания: что показывают исследования",
+            "lead": "Новые данные показывают, как простые дыхательные практики меняют реакцию на стресс и помогают яснее мыслить.",
+            "body": """Недавние исследования подтверждают: контролируемое дыхание даёт измеримую пользу для управления стрессом и когнитивных функций.
 
-**How It Works**
+**Как это работает**
 
-When you practice mindful breathing, you activate your parasympathetic nervous system—the body's natural calming mechanism. Research published in March 2024 shows that participants experienced reduced cortisol levels after just 10 minutes of paced breathing exercises (source: Effects of Controlled Breathing on Stress Response, example.org/study/breathing-2024).
+При осознанном дыхании активируется парасимпатическая нервная система — естественный механизм успокоения. Исследование 2024 года показало снижение кортизола уже после 10 минут ритмичного дыхания (источник: Effects of Controlled Breathing on Stress Response, https://example.org/study/breathing-2024).
 
-**The Evidence for Focus and Emotional Balance**
+**Доказательства для фокуса и эмоций**
 
-An 8-week study on mindfulness practice revealed significant improvements in attention span among participants who maintained regular breathing exercises (source: Mindfulness Practice and Cognitive Function, example.org/journal/mindfulness). The research suggests that consistent practice helps strengthen neural pathways associated with focus and emotional regulation.
+8-недельная практика внимательности улучшила устойчивость внимания у участников (источник: Mindfulness Practice and Cognitive Function, https://example.org/journal/mindfulness). Регулярность помогает укреплять навыки концентрации и эмоциональной регуляции.
 
-**Practical Application: The 4-7-8 Technique**
+**Практика: техника 4-7-8**
 
-Clinical trials examining the 4-7-8 breathing pattern found a 31% decrease in anxiety scores among participants using this structured approach (source: Breathing Patterns and Anxiety Management, example.org/clinical-trials/anxiety). The technique involves:
+В клинических протоколах техника 4-7-8 связала с снижением тревожности примерно на 31% (источник: Breathing Patterns and Anxiety Management, https://example.org/clinical-trials/anxiety):
 
-- Inhaling for 4 counts
-- Holding for 7 counts
-- Exhaling for 8 counts
+- вдох на 4 счёта
+- задержка на 7
+- выдох на 8
 
-**What This Means for You**
+**Что это значит для вас**
 
-The science is clear: incorporating mindful breathing into your daily routine can create tangible improvements in stress management and mental clarity. Start with 5 minutes per day and gradually increase as you become comfortable with the practice.
+Если добавить короткую дыхательную практику в день, можно мягко поддержать стрессоустойчивость и ясность. Начните с 5 минут и наращивайте по комфорту.
 
-Ready to experience the benefits? Try a guided breathing practice today.""",
-            "cta": "Start your practice",
+Готовы попробовать? Начните с короткой guided-практики сегодня.""",
+            "cta": "Попробовать практику",
             "sources_cited": [
                 "https://example.org/study/breathing-2024",
                 "https://example.org/journal/mindfulness",
                 "https://example.org/clinical-trials/anxiety",
             ],
         }
-        return json.dumps(article, ensure_ascii=False)
-    
+        return json.dumps(article, ensure_ascii=False)    
     def _generate_audit(self) -> str:
         if self.force_audit_verdict == "revise":
             score = 0.55
@@ -201,8 +210,61 @@ Ready to experience the benefits? Try a guided breathing practice today.""",
         return json.dumps(audit, ensure_ascii=False)
 
 
+class OpenAIModelProvider(ModelProvider):
+    """Real OpenAI API provider (default for non-mock runs)."""
+
+    def __init__(self, api_key: str):
+        if not api_key:
+            raise ValueError("OpenAI API key is required")
+
+        try:
+            from openai import OpenAI
+        except ImportError as exc:
+            raise ImportError("openai package is required for OpenAIModelProvider") from exc
+
+        self.client = OpenAI(api_key=api_key)
+        # Role slots from config map onto current OpenAI chat models.
+        self.model_map = {
+            ModelType.HAIKU_4_5: "gpt-4o-mini",
+            ModelType.SONNET_5: "gpt-4o",
+            ModelType.OPUS_5: "gpt-4o",
+        }
+
+    async def generate(
+        self,
+        prompt: str,
+        model: ModelType,
+        max_tokens: int = 4096,
+        system: str | None = None,
+    ) -> dict[str, Any]:
+        model_id = self.model_map.get(model, self.model_map[ModelType.SONNET_5])
+        messages: list[dict[str, str]] = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+
+        response = self.client.chat.completions.create(
+            model=model_id,
+            messages=messages,
+            max_tokens=max_tokens,
+        )
+
+        choice = response.choices[0] if response.choices else None
+        content = choice.message.content if choice and choice.message else ""
+        usage = response.usage
+
+        return {
+            "content": content or "",
+            "usage": {
+                "input_tokens": getattr(usage, "prompt_tokens", 0) or 0,
+                "output_tokens": getattr(usage, "completion_tokens", 0) or 0,
+                "cache_read_tokens": 0,
+            },
+        }
+
+
 class AnthropicModelProvider(ModelProvider):
-    """Real Anthropic API provider."""
+    """Real Anthropic API provider (optional)."""
     
     def __init__(self, api_key: str):
         if not api_key:
@@ -254,11 +316,28 @@ class AnthropicModelProvider(ModelProvider):
         }
 
 
-def get_provider(use_mock: bool = True, api_key: str = "") -> ModelProvider:
+def get_provider(
+    use_mock: bool = True,
+    provider: str = "openai",
+    openai_api_key: str = "",
+    anthropic_api_key: str = "",
+    api_key: str = "",
+) -> ModelProvider:
+    """Return mock or live provider. Default live backend is OpenAI."""
     if use_mock:
         return MockModelProvider()
-    
-    if not api_key:
-        raise ValueError("API key required for non-mock provider")
-    
-    return AnthropicModelProvider(api_key)
+
+    backend = (provider or "openai").lower()
+    if backend == "openai":
+        key = openai_api_key or api_key
+        if not key:
+            raise ValueError("OPENAI_API_KEY required when USE_MOCK_PROVIDER=false")
+        return OpenAIModelProvider(key)
+
+    if backend == "anthropic":
+        key = anthropic_api_key or api_key
+        if not key:
+            raise ValueError("ANTHROPIC_API_KEY required for anthropic provider")
+        return AnthropicModelProvider(key)
+
+    raise ValueError(f"Unknown model provider: {provider}")

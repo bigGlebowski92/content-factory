@@ -175,7 +175,7 @@ class DirectionProfile(BaseModel):
     topics_per_week: int = 2
     rubrics: list[str] = Field(default_factory=list)
     channels: list[str] = Field(default_factory=list)
-    cta: str = "Learn more"
+    cta: str = "Узнать больше"
     landing_url: str = ""
     brand_placeholder: str = "[project name]"
     timezone: str = "UTC"

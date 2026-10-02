@@ -1,3 +1,24 @@
+const STATUS_LABELS = {
+  draft: "черновик",
+  research: "исследование",
+  generation: "генерация",
+  audit: "аудит",
+  approval: "ожидает согласования",
+  revision: "правка",
+  disputed: "спорный",
+  approved: "одобрен",
+  rejected: "отклонён",
+  scheduled: "запланирован",
+  published: "опубликован",
+  error: "ошибка",
+};
+
+const VERDICT_LABELS = {
+  pass: "принято",
+  revise: "на доработку",
+  reject: "отклонено",
+};
+
 const state = {
   tasks: [],
   selectedId: null,
@@ -14,6 +35,14 @@ const els = {
   runForm: document.getElementById("run-form"),
   btnRun: document.getElementById("btn-run"),
 };
+
+function statusLabel(status) {
+  return STATUS_LABELS[status] || status;
+}
+
+function verdictLabel(verdict) {
+  return VERDICT_LABELS[verdict] || verdict;
+}
 
 function toast(message, isError = false) {
   els.toast.hidden = false;
@@ -45,7 +74,7 @@ async function api(path, options = {}) {
 }
 
 function topicTitle(task) {
-  return task.generated_texts?.at(-1)?.title || task.topic?.text || "Untitled";
+  return task.generated_texts?.at(-1)?.title || task.topic?.text || "Без названия";
 }
 
 function renderList() {
@@ -55,7 +84,7 @@ function renderList() {
     .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 
   if (!tasks.length) {
-    els.list.innerHTML = `<p class="detail-empty">Поки немає задач. Запусти цикл зліва.</p>`;
+    els.list.innerHTML = `<p class="detail-empty">Пока нет задач. Запустите цикл слева.</p>`;
     return;
   }
 
@@ -65,9 +94,9 @@ function renderList() {
       <button type="button" class="task-row ${t.id === state.selectedId ? "active" : ""}" data-id="${t.id}" role="listitem">
         <div class="title">${escapeHtml(topicTitle(t))}</div>
         <div class="meta">
-          <span class="badge ${t.status}">${t.status}</span>
+          <span class="badge ${t.status}">${escapeHtml(statusLabel(t.status))}</span>
           <span>${escapeHtml(t.direction)}</span>
-          <span>rev ${t.revision_count ?? 0}</span>
+          <span>правки ${t.revision_count ?? 0}</span>
         </div>
       </button>`
     )
@@ -94,7 +123,7 @@ function renderDetail() {
   const task = selectedTask();
   if (!task) {
     els.detail.className = "detail-empty";
-    els.detail.textContent = "Обери задачу зі списку";
+    els.detail.textContent = "Выберите задачу из списка";
     return;
   }
 
@@ -106,17 +135,17 @@ function renderDetail() {
 
   const actions = [];
   if (task.status === "approval" || task.status === "disputed") {
-    actions.push(`<button type="button" class="btn ok" data-act="approve">Approve</button>`);
-    actions.push(`<button type="button" class="btn danger" data-act="reject">Reject</button>`);
+    actions.push(`<button type="button" class="btn ok" data-act="approve">Одобрить</button>`);
+    actions.push(`<button type="button" class="btn danger" data-act="reject">Отклонить</button>`);
   }
   if (task.status === "approved") {
-    actions.push(`<button type="button" class="btn primary" data-act="schedule">Schedule Telegram (now-1m)</button>`);
+    actions.push(`<button type="button" class="btn primary" data-act="schedule">Telegram: запланировать (−1 мин)</button>`);
     if (!platform) {
-      actions.push(`<button type="button" class="btn primary" data-act="platform">Publish to platform</button>`);
+      actions.push(`<button type="button" class="btn primary" data-act="platform">Опубликовать на площадку</button>`);
     }
   }
   if (platform?.short_code) {
-    actions.push(`<button type="button" class="btn ghost" data-act="click">Simulate click (${platform.short_code})</button>`);
+    actions.push(`<button type="button" class="btn ghost" data-act="click">Симулировать клик (${platform.short_code})</button>`);
   }
 
   els.detail.className = "detail-block";
@@ -124,26 +153,26 @@ function renderDetail() {
     <p class="kicker">${escapeHtml(task.id)}</p>
     <h3>${escapeHtml(topicTitle(task))}</h3>
     <div class="meta">
-      <span class="badge ${task.status}">${task.status}</span>
+      <span class="badge ${task.status}">${escapeHtml(statusLabel(task.status))}</span>
       <span class="badge">${escapeHtml(task.direction)}</span>
     </div>
     ${
       audit
-        ? `<p class="kicker">Audit: ${escapeHtml(audit.verdict)} · score ${(audit.score ?? 0).toFixed(2)}</p>`
+        ? `<p class="kicker">Аудит: ${escapeHtml(verdictLabel(audit.verdict))} · оценка ${(audit.score ?? 0).toFixed(2)}</p>`
         : ""
     }
-    ${text ? `<div class="preview">${escapeHtml(preview)}</div>` : "<p class='detail-empty'>Немає згенерованого тексту</p>"}
+    ${text ? `<div class="preview">${escapeHtml(preview)}</div>` : "<p class='detail-empty'>Нет сгенерированного текста</p>"}
     ${
       pub
-        ? `<p class="kicker">Telegram: msg ${escapeHtml(pub.message_id)} · ${escapeHtml(pub.utm_url || "")}</p>`
+        ? `<p class="kicker">Telegram: сообщение ${escapeHtml(pub.message_id)} · ${escapeHtml(pub.utm_url || "")}</p>`
         : ""
     }
     ${
       platform
-        ? `<p class="kicker">Platform: ${escapeHtml(platform.short_url || "")}<br/>target ${escapeHtml(platform.target_url || "")}</p>`
+        ? `<p class="kicker">Площадка: ${escapeHtml(platform.short_url || "")}<br/>цель ${escapeHtml(platform.target_url || "")}</p>`
         : ""
     }
-    <div class="row-actions">${actions.join("") || "<span class='detail-empty'>Немає доступних дій для цього статусу</span>"}</div>
+    <div class="row-actions">${actions.join("") || "<span class='detail-empty'>Нет доступных действий для этого статуса</span>"}</div>
   `;
 
   els.detail.querySelectorAll("[data-act]").forEach((btn) => {
@@ -158,13 +187,13 @@ async function handleAction(act, task) {
         method: "POST",
         body: JSON.stringify({ approved: true }),
       });
-      toast("Схвалено");
+      toast("Одобрено");
     } else if (act === "reject") {
       await api(`/tasks/${task.id}/approve`, {
         method: "POST",
         body: JSON.stringify({ approved: false }),
       });
-      toast("Відхилено");
+      toast("Отклонено");
     } else if (act === "schedule") {
       const when = new Date(Date.now() - 60_000).toISOString().replace(/\.\d{3}Z$/, "");
       await api(`/tasks/${task.id}/schedule`, {
@@ -172,14 +201,14 @@ async function handleAction(act, task) {
         body: JSON.stringify({ scheduled_at: when }),
       });
       const due = await api("/publish/due", { method: "POST" });
-      toast(`Telegram: scheduled + published (${due.count})`);
+      toast(`Telegram: запланировано и опубликовано (${due.count})`);
     } else if (act === "platform") {
       await api(`/tasks/${task.id}/publish-platform`, { method: "POST" });
-      toast("Опубліковано на майданчик (mock)");
+      toast("Опубликовано на площадку (mock)");
     } else if (act === "click") {
       const code = task.platform_publication?.short_code;
       const result = await api(`/links/${code}/click`, { method: "POST" });
-      toast(`Клік записано: ${result.clicks}`);
+      toast(`Клик записан: ${result.clicks}`);
     }
     await refreshAll();
   } catch (err) {
@@ -205,19 +234,19 @@ async function loadMetrics() {
   ]);
 
   els.spend.textContent = [
-    `daily  $${spend.daily.spent_usd.toFixed(4)} / ${spend.daily.limit_usd} (${spend.daily.percentage.toFixed(1)}%)`,
-    `  warning=${spend.daily.warning} exceeded=${spend.daily.exceeded}`,
-    `monthly $${spend.monthly.spent_usd.toFixed(4)} / ${spend.monthly.limit_usd}`,
-    `  warning=${spend.monthly.warning} exceeded=${spend.monthly.exceeded}`,
+    `день   $${spend.daily.spent_usd.toFixed(4)} / ${spend.daily.limit_usd} (${spend.daily.percentage.toFixed(1)}%)`,
+    `  предупреждение=${spend.daily.warning} превышен=${spend.daily.exceeded}`,
+    `месяц  $${spend.monthly.spent_usd.toFixed(4)} / ${spend.monthly.limit_usd}`,
+    `  предупреждение=${spend.monthly.warning} превышен=${spend.monthly.exceeded}`,
   ].join("\n");
 
   els.weekly.textContent = weekly.summary_text || JSON.stringify(weekly, null, 2);
 
   if (!clicks.rows?.length) {
-    els.clicks.textContent = "Ще немає кліків. Опублікуй на platform і натисни Simulate click.";
+    els.clicks.textContent = "Кликов пока нет. Опубликуйте на площадку и нажмите «Симулировать клик».";
   } else {
     els.clicks.textContent = [
-      `total_clicks=${clicks.total_clicks}`,
+      `всего_кликов=${clicks.total_clicks}`,
       ...clicks.rows.map(
         (r) => `[${r.channel}] ${r.text_title} → ${r.clicks} (${r.short_code})`
       ),
@@ -258,7 +287,7 @@ els.runForm.addEventListener("submit", async (e) => {
       body: JSON.stringify(payload),
     });
     state.selectedId = task.id;
-    toast(`Цикл готовий → ${task.status}`);
+    toast(`Цикл готов → ${statusLabel(task.status)}`);
     await refreshAll();
   } catch (err) {
     toast(err.message, true);
@@ -274,7 +303,7 @@ document.getElementById("btn-refresh").addEventListener("click", () => {
 document.getElementById("btn-publish-due").addEventListener("click", async () => {
   try {
     const due = await api("/publish/due", { method: "POST" });
-    toast(`Published due: ${due.count}`);
+    toast(`Опубликовано due: ${due.count}`);
     await refreshAll();
   } catch (err) {
     toast(err.message, true);

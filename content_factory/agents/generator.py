@@ -1,6 +1,7 @@
 import json
 
 from content_factory.config import load_direction_profile, load_style_guide
+from content_factory.json_util import parse_model_json
 from content_factory.models import (
     ContentFormat,
     FactDossier,
@@ -36,53 +37,55 @@ class Generator:
         ])
         
         format_specs = {
-            ContentFormat.ARTICLE: "4,000-6,000 characters. Must include: thesis, facts with citations, practical conclusion, call to action.",
-            ContentFormat.POST: "Up to 1,000 characters. Single clear idea with link to full article.",
-            ContentFormat.REVIEW: "3,000-5,000 characters. Must include: what happened, why it matters, sources.",
+            ContentFormat.ARTICLE: "4 000–6 000 символов. Обязательно: тезис, факты с цитатами, практический вывод, призыв к действию.",
+            ContentFormat.POST: "До 1 000 символов. Одна ясная идея со ссылкой на полный материал.",
+            ContentFormat.REVIEW: "3 000–5 000 символов. Обязательно: что произошло, почему важно, источники.",
         }
         
-        prompt = f"""You are an expert content writer for a wellness platform.
+        prompt = f"""Ты — экспертный автор контента для wellness-платформы.
 
-Direction: {profile.name}
-Audience: {profile.audience}
-Tone: {profile.tone}
+ВАЖНО: весь текст (title, lead, body, cta) пиши ТОЛЬКО на русском языке.
 
-Topic: {topic.text}
-Format: {format.value}
-Requirements: {format_specs[format]}
+Направление: {profile.name}
+Аудитория: {profile.audience}
+Тон: {profile.tone}
 
-Available Facts and Sources:
+Тема: {topic.text}
+Формат: {format.value}
+Требования: {format_specs[format]}
+
+Доступные факты и источники:
 {facts_text}
 
-Style Guide Rules:
-{json.dumps(style_guide, indent=2)}
+Правила стайлгайда:
+{json.dumps(style_guide, indent=2, ensure_ascii=False)}
 
-Write an original, engaging {format.value} on this topic. Requirements:
-1. Use ONLY facts from the provided dossier
-2. Cite sources with URLs in parentheses
-3. Match the tone and style guide
-4. Include all required elements for this format
-5. Use {profile.brand_placeholder} as placeholder for brand name
-6. End with call to action: "{profile.cta}"
+Напиши оригинальный, живой {format.value} по этой теме. Требования:
+1. Используй ТОЛЬКО факты из досье
+2. Указывай источники с URL в скобках
+3. Соблюдай тон и стайлгайд
+4. Включи все обязательные элементы формата
+5. Для названия бренда используй плейсхолдер {profile.brand_placeholder}
+6. Заверши призывом к действию: "{profile.cta}"
 
-CRITICAL RESTRICTIONS:
-- NO medical diagnoses or individual treatment recommendations
-- NO medical promises or guaranteed outcomes
-- NO claims beyond what sources support
-- Avoid these phrases: {', '.join(style_guide.get('forbidden_phrases', []))}
+КРИТИЧЕСКИЕ ОГРАНИЧЕНИЯ:
+- НИКАКИХ медицинских диагнозов и индивидуальных рекомендаций по лечению
+- НИКАКИХ медицинских обещаний и гарантий результата
+- НИКАКИХ утверждений сверх того, что подтверждают источники
+- Избегай фраз: {', '.join(style_guide.get('forbidden_phrases', []))}
 
-Write naturally, avoiding AI-like patterns such as:
-- Generic opening statements
-- Excessive transition words
-- Passive voice overuse
-- Repetitive sentence structures
+Пиши естественно, без типичных AI-штампов:
+- шаблонных вступлений
+- избыточных вводных оборотов
+- злоупотребления пассивом
+- однотипных конструкций предложений
 
-Respond with JSON:
+Ответь JSON:
 {{
-    "title": "Compelling title",
-    "lead": "Opening paragraph (if applicable)",
-    "body": "Full text content with inline citations",
-    "cta": "Call to action text",
+    "title": "Цепляющий заголовок на русском",
+    "lead": "Лид-абзац на русском",
+    "body": "Полный текст на русском с цитированием источников",
+    "cta": "Призыв к действию на русском",
     "sources_cited": ["url1", "url2"]
 }}"""
 
@@ -93,7 +96,7 @@ Respond with JSON:
         )
         
         try:
-            data = json.loads(response["content"])
+            data = parse_model_json(response["content"])
             
             generated_text = GeneratedText(
                 format=format,
@@ -104,7 +107,7 @@ Respond with JSON:
                 sources_cited=data.get("sources_cited", []),
                 word_count=len(data.get("body", "").split()),
             )
-        except (json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             generated_text = GeneratedText(
                 format=format,
                 title=topic.text,

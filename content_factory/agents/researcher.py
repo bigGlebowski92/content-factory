@@ -1,5 +1,6 @@
 import json
 
+from content_factory.json_util import parse_model_json
 from content_factory.models import Fact, FactDossier, ModelCall, ModelType, Source, Topic
 from content_factory.providers import ModelProvider
 
@@ -16,37 +17,39 @@ class Researcher:
         topic: Topic,
         task_id,
     ) -> tuple[FactDossier, ModelCall]:
-        prompt = f"""You are a research specialist gathering facts for content creation.
+        prompt = f"""Ты — исследователь, собираешь факты для создания контента.
 
-Topic: {topic.text}
-Rubric: {topic.rubric}
+ВАЖНО: statement и supporting_quote пиши на русском языке. Названия источников можно оставить как в оригинале.
 
-Research this topic and compile a fact dossier. Find 3-5 credible facts that support creating authoritative content on this topic.
+Тема: {topic.text}
+Рубрика: {topic.rubric}
 
-For each fact, provide:
-- A clear statement
-- A credible source (URL, title, date)
-- A supporting quote from the source
-- Reliability rating (high/medium/low)
+Исследуй тему и собери fact dossier. Найди 3–5 достоверных фактов для авторитетного материала.
 
-Important restrictions:
-- NO medical diagnoses or individual treatment recommendations
-- NO medical promises or guaranteed outcomes
-- Only evidence-based information from credible sources
-- Prefer scientific studies, official organizations, and peer-reviewed publications
+Для каждого факта укажи:
+- чёткую формулировку (statement) на русском
+- достоверный источник (URL, title, date)
+- supporting_quote на русском (или близкий перевод цитаты)
+- reliability: high/medium/low
 
-Respond with JSON in this format:
+Ограничения:
+- НИКАКИХ медицинских диагнозов и индивидуальных рекомендаций по лечению
+- НИКАКИХ медицинских обещаний и гарантий результата
+- Только evidence-based информация из надёжных источников
+- Предпочтительны научные исследования, официальные организации и peer-reviewed публикации
+
+Ответь JSON:
 {{
     "facts": [
         {{
-            "statement": "Clear factual statement",
+            "statement": "Фактическое утверждение на русском",
             "source": {{
                 "url": "https://example.org/study",
-                "title": "Source title",
+                "title": "Название источника",
                 "date": "2024-03",
                 "reliability": "high"
             }},
-            "supporting_quote": "Direct quote from source"
+            "supporting_quote": "Цитата/перевод цитаты на русском"
         }}
     ]
 }}"""
@@ -58,7 +61,7 @@ Respond with JSON in this format:
         )
         
         try:
-            data = json.loads(response["content"])
+            data = parse_model_json(response["content"])
             facts = []
             sources = []
             
@@ -78,7 +81,7 @@ Respond with JSON in this format:
                 facts=facts,
                 sources=sources,
             )
-        except (json.JSONDecodeError, KeyError) as e:
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             dossier = FactDossier(topic=topic.text, facts=[], sources=[])
         
         usage = response["usage"]

@@ -1,6 +1,7 @@
 import json
 
 from content_factory.config import load_direction_profile, load_style_guide
+from content_factory.json_util import parse_model_json
 from content_factory.models import (
     AuditRemark,
     AuditResult,
@@ -38,28 +39,30 @@ class Auditor:
             for fact in dossier.facts
         ])
         
-        checklist = """Quality Checklist (rate each True/False):
-1. topic_matches_direction - Topic fits the direction and rubric
-2. facts_confirmed - All facts match the dossier, no unsupported claims
-3. no_medical_claims - No medical diagnoses, promises, or individual recommendations
-4. has_structure - Includes thesis, arguments, and practical conclusion
-5. style_matches - Tone and vocabulary match style guide
-6. no_duplicates - No repetition of previously published content
-7. within_length - Length is appropriate for format
-8. has_cta - Call to action and link are present
-9. brand_from_config - Brand name only from provided placeholder
-10. no_ai_patterns - No obvious AI writing patterns (generic openings, excessive transitions, etc.)"""
+        checklist = """Чеклист качества (True/False):
+1. topic_matches_direction — тема соответствует направлению и рубрике
+2. facts_confirmed — все факты подтверждены досье, нет неподтверждённых утверждений
+3. no_medical_claims — нет диагнозов, обещаний и индивидуальных медрекомендаций
+4. has_structure — есть тезис, аргументы и практический вывод
+5. style_matches — тон и лексика соответствуют стайлгайду
+6. no_duplicates — нет повторов уже опубликованного
+7. within_length — длина уместна для формата
+8. has_cta — есть призыв к действию и ссылка
+9. brand_from_config — бренд только из заданного плейсхолдера
+10. no_ai_patterns — нет явных AI-штампов"""
         
-        prompt = f"""You are a critical content reviewer. Audit this text thoroughly.
+        prompt = f"""Ты — строгий редактор контента. Проведи аудит текста.
 
-FACT DOSSIER (ONLY SOURCE OF TRUTH):
+ВАЖНО: комментарии в remarks.comment пиши на русском. JSON-ключи и verdict оставляй на английском (pass/revise/reject).
+
+ДОСЬЕ ФАКТОВ (ЕДИНСТВЕННЫЙ ИСТОЧНИК ИСТИНЫ):
 {facts_text}
 
-STYLE GUIDE:
-{json.dumps(style_guide, indent=2)}
+СТАЙЛГАЙД:
+{json.dumps(style_guide, indent=2, ensure_ascii=False)}
 
-TEXT TO REVIEW:
-Title: {text.title}
+ТЕКСТ НА ПРОВЕРКУ:
+Заголовок: {text.title}
 {text.lead or ''}
 
 {text.body}
@@ -68,32 +71,30 @@ Title: {text.title}
 
 {checklist}
 
-Review the text against this checklist. For each item, evaluate True or False.
+Оцени каждый пункт True или False.
+Общий score от 0.0 до 1.0:
+- score >= {threshold}: verdict = "pass"
+- score < {threshold}: verdict = "revise"
+- серьёзные нарушения (медицина, неподтверждённые факты): verdict = "reject"
 
-Calculate an overall score (0.0 to 1.0) based on checklist items.
-- If score >= {threshold}: verdict is "pass"
-- If score < {threshold}: verdict is "revise"
-- If major violations (medical claims, unsupported facts): verdict is "reject"
+Для проблем укажи remarks:
+- rule: какое правило нарушено
+- quote: точная цитата из текста
+- comment: что улучшить (на русском)
 
-For any False items or issues, provide specific remarks with:
-- rule: which rule was violated
-- quote: exact text excerpt
-- comment: specific improvement needed
-
-Respond with JSON:
+Ответь JSON:
 {{
-    "verdict": "pass" or "revise" or "reject",
+    "verdict": "pass" или "revise" или "reject",
     "score": 0.85,
     "checklist": {{
         "topic_matches_direction": true,
-        "facts_confirmed": true,
-        ...
+        "facts_confirmed": true
     }},
     "remarks": [
         {{
             "rule": "style_matches",
-            "quote": "exact excerpt from text",
-            "comment": "what needs improvement"
+            "quote": "фрагмент текста",
+            "comment": "что улучшить"
         }}
     ]
 }}"""
@@ -105,7 +106,7 @@ Respond with JSON:
         )
         
         try:
-            data = json.loads(response["content"])
+            data = parse_model_json(response["content"])
             
             verdict_str = data.get("verdict", "revise")
             verdict = AuditVerdict(verdict_str)
@@ -125,7 +126,7 @@ Respond with JSON:
                 remarks=remarks,
                 checklist_scores=data.get("checklist", {}),
             )
-        except (json.JSONDecodeError, KeyError, ValueError):
+        except (json.JSONDecodeError, KeyError, ValueError, TypeError):
             audit_result = AuditResult(
                 verdict=AuditVerdict.REVISE,
                 score=0.5,

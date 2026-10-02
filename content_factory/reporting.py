@@ -67,14 +67,14 @@ def _format_summary(
     start: datetime,
     end: datetime,
 ) -> str:
-    scope = direction or "all directions"
+    scope = direction or "все направления"
     lines = [
-        f"Weekly spend report ({start.date()} → {end.date()})",
-        f"Scope: {scope}",
-        f"Total: ${total:.4f}",
+        f"Недельный отчёт расходов ({start.date()} → {end.date()})",
+        f"Область: {scope}",
+        f"Итого: ${total:.4f}",
     ]
     if by_stage:
-        lines.append("By stage:")
+        lines.append("По этапам:")
         for stage, cost in sorted(by_stage.items()):
             lines.append(f"  - {stage}: ${cost:.4f}")
     return "\n".join(lines)

@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     )
 
     anthropic_api_key: str = ""
+    openai_api_key: str = ""
+    # openai | anthropic — used when use_mock_provider=false
+    model_provider: str = "openai"
     use_mock_provider: bool = True
     
     planner_model: ModelType = ModelType.HAIKU_4_5
@@ -54,7 +57,13 @@ def load_direction_profile(direction_name: str, config_dir: str = "config") -> D
     config_path = Path(config_dir) / "directions" / f"{direction_name}.yaml"
     
     if not config_path.exists():
-        return DirectionProfile(name=direction_name)
+        # Allow ad-hoc / custom directions without a YAML file
+        return DirectionProfile(
+            name=direction_name,
+            audience="Широкая русскоязычная аудитория",
+            tone="Ясный, спокойный, практичный",
+            cta="Узнать больше",
+        )
     
     with open(config_path) as f:
         data = yaml.safe_load(f)

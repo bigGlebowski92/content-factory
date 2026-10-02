@@ -30,6 +30,8 @@ def settings(test_data_dir):
     return Settings(
         use_mock_provider=True,
         anthropic_api_key="",
+        openai_api_key="",
+        model_provider="openai",
         max_revision_rounds=2,
         audit_pass_threshold=0.7,
         daily_spend_limit_usd=10.0,

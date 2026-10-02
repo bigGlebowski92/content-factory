@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 from content_factory.config import load_direction_profile
+from content_factory.json_util import parse_model_json
 from content_factory.models import ModelCall, ModelType, Topic
 from content_factory.providers import ModelProvider
 
@@ -21,26 +22,28 @@ class TopicPlanner:
     ) -> tuple[list[Topic], ModelCall]:
         profile = load_direction_profile(direction, config_dir)
         
-        prompt = f"""You are a content planner for a wellness platform.
+        prompt = f"""Ты — контент-планировщик wellness-платформы.
 
-Direction: {profile.name}
-Audience: {profile.audience}
-Tone: {profile.tone}
-Rubrics: {', '.join(profile.rubrics)}
+ВАЖНО: topic и rationale пиши на русском языке.
 
-Generate {count} topic ideas for this week. Each topic should:
-- Match one of the rubrics
-- Be relevant to the audience
-- Have clear value for readers
-- Include a brief rationale
+Направление: {profile.name}
+Аудитория: {profile.audience}
+Тон: {profile.tone}
+Рубрики: {', '.join(profile.rubrics) if profile.rubrics else 'research, practical_guide, q_and_a'}
 
-Respond with JSON in this format:
+Сгенерируй {count} тем на эту неделю. Каждая тема должна:
+- соответствовать одной из рубрик
+- быть релевантной аудитории
+- давать читателю понятную пользу
+- включать краткое обоснование (rationale)
+
+Ответь JSON:
 {{
     "topics": [
         {{
-            "topic": "Full topic title",
+            "topic": "Полный заголовок темы на русском",
             "rubric": "rubric_name",
-            "rationale": "Why this topic now"
+            "rationale": "Почему эта тема сейчас — на русском"
         }}
     ]
 }}"""
@@ -52,7 +55,7 @@ Respond with JSON in this format:
         )
         
         try:
-            data = json.loads(response["content"])
+            data = parse_model_json(response["content"])
             topics = [
                 Topic(
                     text=t["topic"],
@@ -62,7 +65,7 @@ Respond with JSON in this format:
                 )
                 for t in data.get("topics", [])[:count]
             ]
-        except (json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             topics = []
         
         usage = response["usage"]

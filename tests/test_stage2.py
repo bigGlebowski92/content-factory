@@ -176,7 +176,7 @@ def test_weekly_spend_report(stage2_orchestrator, storage):
     assert abs(report["total_cost_usd"] - 0.15) < 1e-9
     assert report["by_stage"]["generator"] == 0.12
     assert report["by_stage"]["planner"] == 0.03
-    assert "Weekly spend report" in report["summary_text"]
+    assert "Недельный отчёт" in report["summary_text"]
     assert report["limits"]["daily_usd"] == 5.0
 
 

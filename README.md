@@ -16,8 +16,10 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 pip install -e .            # опційно, для editable install
 
-# 4. Конфіг (mock за замовчуванням — без API-ключів)
+# 4. Конфіг
 cp .env.example .env
+# Для mock: USE_MOCK_PROVIDER=true
+# Для OpenAI: USE_MOCK_PROVIDER=false, MODEL_PROVIDER=openai, OPENAI_API_KEY=sk-...
 
 # 5. Запуск UI + API
 PYTHONPATH=. uvicorn content_factory.api:app --host 127.0.0.1 --port 8000
@@ -27,9 +29,22 @@ PYTHONPATH=. uvicorn content_factory.api:app --host 127.0.0.1 --port 8000
 
 | Що | URL |
 |---|---|
-| **Web UI** | http://127.0.0.1:8000/ |
+| **Web UI** (російською) | http://127.0.0.1:8000/ |
 | Swagger API | http://127.0.0.1:8000/docs |
 | JSON info | http://127.0.0.1:8000/api |
+
+### OpenAI замість Anthropic
+За замовчуванням живий бекенд — **OpenAI** (`MODEL_PROVIDER=openai`).
+
+```bash
+# у .env
+USE_MOCK_PROVIDER=false
+MODEL_PROVIDER=openai
+OPENAI_API_KEY=sk-your-key
+```
+
+Ролі пайплайна мапляться так: planner → `gpt-4o-mini`, researcher/auditor/generator → `gpt-4o`.
+Anthropic лишається опцією: `MODEL_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`.
 
 ### Як протестувати в UI
 1. **Новий цикл** → генерація зупиниться на `approval`

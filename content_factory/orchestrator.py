@@ -38,7 +38,9 @@ class Orchestrator:
         if provider is None:
             provider = get_provider(
                 use_mock=settings.use_mock_provider,
-                api_key=settings.anthropic_api_key,
+                provider=settings.model_provider,
+                openai_api_key=settings.openai_api_key,
+                anthropic_api_key=settings.anthropic_api_key,
             )
         
         self.provider = provider
