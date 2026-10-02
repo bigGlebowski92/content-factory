@@ -12,19 +12,19 @@ class Storage:
     
     def __init__(self, data_dir: str = "data"):
         self.data_dir = Path(data_dir)
-        self.data_dir.mkdir(exist_ok=True)
-        
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+
         self.tasks_dir = self.data_dir / "tasks"
-        self.tasks_dir.mkdir(exist_ok=True)
-        
+        self.tasks_dir.mkdir(parents=True, exist_ok=True)
+
         self.calls_dir = self.data_dir / "calls"
-        self.calls_dir.mkdir(exist_ok=True)
+        self.calls_dir.mkdir(parents=True, exist_ok=True)
 
         self.short_links_dir = self.data_dir / "short_links"
-        self.short_links_dir.mkdir(exist_ok=True)
+        self.short_links_dir.mkdir(parents=True, exist_ok=True)
 
         self.clicks_dir = self.data_dir / "clicks"
-        self.clicks_dir.mkdir(exist_ok=True)
+        self.clicks_dir.mkdir(parents=True, exist_ok=True)
     
     def save_task(self, task: Task) -> None:
         task.updated_at = datetime.utcnow()
